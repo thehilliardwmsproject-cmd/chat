@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
 
 const app = express();
-const PORT = 4000;
+const PORT = 5000;
 
 app.use(express.static("public"));
 app.use(bodyParser.json());
@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 const USERS_FILE = path.join(__dirname,"users.json");
 const CHATS_DIR = path.join(__dirname,"chats");
 const INVITE_CODES_FILE = path.join(__dirname,"invite_codes.json");
-const RECAPTCHA_SECRET = "6LcxBgYsAAAAAPrpU2vx2NiD0rlfYU2CRW0dxK_E";
+const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET_KEY || "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
 
 if(!fs.existsSync(CHATS_DIR)) fs.mkdirSync(CHATS_DIR);
 if(!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, "{}");
@@ -40,9 +40,11 @@ async function verifyRecaptcha(token){
 // Register
 app.post("/register", async (req,res)=>{
     const {username,password,recaptchaToken} = req.body;
-    if(!username||!password||!recaptchaToken) return res.status(400).json({error:"Missing fields"});
-    const valid = await verifyRecaptcha(recaptchaToken);
-    if(!valid) return res.status(400).json({error:"reCAPTCHA verification failed"});
+    if(!username||!password) return res.status(400).json({error:"Missing fields"});
+    if(recaptchaToken){
+        const valid = await verifyRecaptcha(recaptchaToken);
+        if(!valid) return res.status(400).json({error:"reCAPTCHA verification failed"});
+    }
     const users = loadUsers(); if(users[username]) return res.status(400).json({error:"User exists"});
     users[username]={password}; saveUsers(users); res.json({success:true});
 });
@@ -50,9 +52,11 @@ app.post("/register", async (req,res)=>{
 // Login
 app.post("/login", async (req,res)=>{
     const {username,password,recaptchaToken} = req.body;
-    if(!username||!password||!recaptchaToken) return res.status(400).json({error:"Missing fields"});
-    const valid = await verifyRecaptcha(recaptchaToken);
-    if(!valid) return res.status(400).json({error:"reCAPTCHA verification failed"});
+    if(!username||!password) return res.status(400).json({error:"Missing fields"});
+    if(recaptchaToken){
+        const valid = await verifyRecaptcha(recaptchaToken);
+        if(!valid) return res.status(400).json({error:"reCAPTCHA verification failed"});
+    }
     const users = loadUsers(); if(!users[username]||users[username].password!==password) return res.status(401).json({error:"Invalid username/password"});
     res.json({success:true});
 });
@@ -88,4 +92,4 @@ app.post("/join",(req,res)=>{
     ensureChat(chatName); res.json({chat:chatName});
 });
 
-app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, "0.0.0.0", ()=>console.log(`Server running on http://0.0.0.0:${PORT}`));
