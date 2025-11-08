@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings | Chat App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ Settings</h1>
+
+    <div class="settings-box">
+      <label>Change Username</label>
+      <input id="newUsername" placeholder="Enter new username">
+      <button id="saveBtn">Save</button>
+
+      <hr>
+
+      <button id="clearChats">🗑 Clear Joined Chats</button>
+      <button id="logout">🚪 Log Out</button>
+    </div>
+
+    <button class="back-btn" onclick="window.location.href='index.html'">⬅ Back to Chat</button>
+  </div>
+
+  <script>
+    // Fill username if stored
+    const match = document.cookie.match(/username=([^;]+)/);
+    if (match) document.getElementById("newUsername").value = decodeURIComponent(match[1]);
+
+    document.getElementById("saveBtn").onclick = () => {
+      const name = document.getElementById("newUsername").value.trim();
+      if (!name) return alert("Enter a valid name");
+      document.cookie = `username=${encodeURIComponent(name)}; path=/; max-age=${60*60*24*365}`;
+      alert("Username saved!");
+    };
+
+    document.getElementById("clearChats").onclick = () => {
+      localStorage.removeItem("joinedChats");
+      alert("Cleared joined chats!");
+    };
+
+    document.getElementById("logout").onclick = () => {
+      document.cookie = "username=; max-age=0; path=/";
+      document.cookie = "acceptedRules=; max-age=0; path=/";
+      localStorage.clear();
+      alert("Logged out!");
+      window.location.href = "welcome.html";
+    };
+  </script>
+</body>
+</html>

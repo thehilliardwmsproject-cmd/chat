@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<style>
+body { font-family: Arial; margin:0; background:#f4f4f9; color:#333; }
+header { background:#4b6cb7; color:#fff; padding:20px; text-align:center; }
+main { display:flex; flex-direction:column; align-items:center; margin:20px; }
+section { background:#fff; border-radius:10px; padding:20px; width:90%; max-width:800px; margin-bottom:20px; box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+h1,h2,h3 { margin-top:0; }
+input, button, select { padding:10px; margin:5px 0; font-size:1rem; }
+button { cursor:pointer; background:#4b6cb7; color:#fff; border:none; border-radius:5px; }
+button:hover { background:#3a5192; }
+#messages { border:1px solid #ccc; height:300px; overflow-y:scroll; padding:10px; margin-bottom:10px; background:#fafafa; border-radius:5px; }
+.msg { margin-bottom:5px; }
+.chat-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<header><h1>Admin Panel</h1></header>
+<main>
+<section>
+<h2>General Chat</h2>
+<div id="messages"></div>
+<div class="chat-row">
+<input type="text" id="adminMessage" placeholder="Type message...">
+<button id="sendAdmin">Send</button>
+</div>
+</section>
+
+<section>
+<h2>Manage Chats</h2>
+<div class="chat-row">
+<input type="text" id="newChatName" placeholder="Chat name">
+<input type="text" id="newInviteCode" placeholder="Invite code">
+<button id="createChat">Create Chat</button>
+</div>
+<h3>Existing Chats</h3>
+<div class="chat-row">
+<select id="chatSelect"></select>
+<button id="editChat">Edit</button>
+<button id="deleteChat">Delete</button>
+</div>
+</section>
+</main>
+
+<script>
+const adminUsername="admin";
+const adminPassword="admin123";
+
+const msgBox=document.getElementById("messages");
+const adminMessage=document.getElementById("adminMessage");
+const sendAdmin=document.getElementById("sendAdmin");
+const chatSelect=document.getElementById("chatSelect");
+const newChatName=document.getElementById("newChatName");
+const newInviteCode=document.getElementById("newInviteCode");
+const createChat=document.getElementById("createChat");
+const editChat=document.getElementById("editChat");
+const deleteChat=document.getElementById("deleteChat");
+
+let refreshInterval=null;
+
+// Load General messages
+async function loadMessages(){
+  try{
+    const res=await fetch('/messages/general');
+    if(!res.ok) return;
+    const messages=await res.json();
+    msgBox.innerHTML="";
+    messages.forEach(m=>{
+      const div=document.createElement("div");
+      div.className="msg";
+      div.innerHTML=`<b>${m.username}</b>: ${m.text} <span>${m.time}</span>`;
+      msgBox.appendChild(div);
+    });
+    msgBox.scrollTop=msgBox.scrollHeight;
+  }catch(err){console.log(err);}
+}
+loadMessages();
+refreshInterval=setInterval(loadMessages,2000);
+
+// Send message
+sendAdmin.onclick=async()=>{
+  const text=adminMessage.value.trim();
+  if(!text) return;
+  try{
+    const res=await fetch('/send',{method:'POST',headers:{"Content-Type":"application/json"},body:JSON.stringify({username:adminUsername,password:adminPassword,text,chat:"general",isAdmin:true})});
+    if(res.ok){adminMessage.value="";loadMessages();}
+    else alert("Failed to send message");
+  }catch{alert("Server error");}
+};
+
+// Load chats dropdown
+async function loadChats(){
+  try{
+    const res=await fetch("/chats");
+    const codes=await res.json();
+    chatSelect.innerHTML="";
+    Object.keys(codes).forEach(chat=>{
+      const opt=document.createElement("option");
+      opt.value=chat;
+      opt.textContent=chat.charAt(0).toUpperCase()+chat.slice(1);
+      chatSelect.appendChild(opt);
+    });
+  }catch{console.log("Cannot load chats");}
+}
+loadChats();
+
+// Create chat
+createChat.onclick=async()=>{
+  const chat=newChatName.value.trim();
+  const code=newInviteCode.value.trim();
+  if(!chat||!code) return alert("Enter chat name and invite code");
+  try{
+    const res=await fetch("/chats");
+    const codes=await res.json();
+    if(codes[chat]) return alert("Chat already exists");
+    codes[chat]=code;
+    await fetch("/chats/update",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(codes)});
+    alert("Chat created!");
+    newChatName.value=""; newInviteCode.value="";
+    loadChats();
+  }catch{alert("Error creating chat");}
+};
+
+// Delete chat
+deleteChat.onclick=async()=>{
+  const chat=chatSelect.value;
+  if(!chat||chat.toLowerCase()==="general") return alert("Cannot delete General");
+  try{
+    const res=await fetch("/chats");
+    const codes=await res.json();
+    delete codes[chat];
+    await fetch("/chats/update",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(codes)});
+    alert("Chat deleted!");
+    loadChats();
+  }catch{alert("Error deleting chat");}
+};
+
+// Edit chat
+editChat.onclick=async()=>{
+  const chat=chatSelect.value;
+  if(!chat) return alert("Select a chat");
+  const newName=prompt("New chat name:",chat);
+  if(!newName) return;
+  const newCode=prompt("New invite code:");
+  if(!newCode) return;
+  try{
+    const res=await fetch("/chats");
+    const codes=await res.json();
+    delete codes[chat];
+    codes[newName]=newCode;
+    await fetch("/chats/update",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(codes)});
+    alert("Chat updated!");
+    loadChats();
+  }catch{alert("Error editing chat");}
+};
+<script src="admin.js"></script>
+</body>
+</html>

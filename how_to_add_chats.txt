@@ -1,0 +1,12 @@
+1. in invite_codes.json select an empty/filler line and enter in the name of the group and what its join code will be
+
+2. in chats make a .txt file with the name of that group
+
+3. test
+
+
+
+
+this is an official file from thehilliardwmsproject
+
+thehilliardwmsproject@gmail.com

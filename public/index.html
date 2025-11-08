@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat App</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>💬 Chat App</h1>
+
+    <!-- LOGIN / REGISTER -->
+    <div id="loginBox">
+      <input id="username" placeholder="Username">
+      <input id="password" type="password" placeholder="Password">
+      <div class="g-recaptcha" data-sitekey="6LcxBgYsAAAAADR9ZOykSx7RszSz9OJNJqAuNEqY"></div>
+      <button id="loginBtn">Login</button>
+      <button id="registerBtn">Register</button>
+    </div>
+
+    <!-- CHAT CONTROLS -->
+    <div id="chatControls" style="display:none;">
+      <div class="chat-top-bar">
+        <select id="chatSelect"></select>
+        <button id="leaveBtn">🚪 Leave</button>
+      </div>
+
+      <div id="messages"></div>
+
+      <div class="chat-input-row">
+        <textarea id="messageInput" placeholder="Type a message..."></textarea>
+        <button id="sendBtn">Send</button>
+        <button id="gifBtn">🎞️ GIF</button>
+      </div>
+
+      <div id="gifSearchBox" style="display:none; width: 100%; margin-bottom: 5px; display: flex; gap: 5px;">
+        <input id="gifSearchInput" type="text" placeholder="Search for GIFs...">
+        <button id="gifSearchBtn">Search</button>
+      </div>
+
+      <div id="inviteBox">
+        <input id="inviteCode" placeholder="Enter invite code">
+        <button id="joinBtn">Join Chat</button>
+      </div>
+
+      <p class="email">
+        Contact: <input id="email" readonly value="thehilliardwmsproject@gmail.com">
+        <button id="copyEmail">📋 Copy</button>
+      </p>
+
+      <div class="nav-links">
+        <a href="settings.html" class="nav-link">⚙️ Settings</a>
+      </div>
+
+      <div id="gifPicker" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

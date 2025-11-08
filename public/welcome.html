@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome | Chat App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>👋 Welcome to the Chat App</h1>
+    <p>Before joining, please read and accept our community rules:</p>
+    <div class="rules-box">
+      <ul>
+        <li>Be respectful — no harassment or hate speech.</li>
+        <li>No spam or advertisements.</li>
+        <li>Keep content appropriate for all users.</li>
+        <li>Follow admin directions at all times.</li>
+      </ul>
+    </div>
+    <button id="acceptBtn">✅ I Accept</button>
+  </div>
+
+  <script>
+    document.getElementById("acceptBtn").onclick = () => {
+      document.cookie = "acceptedRules=true; path=/; max-age=" + 60*60*24*365;
+      window.location.href = "index.html";
+    };
+  </script>
+</body>
+</html>

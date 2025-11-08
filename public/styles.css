@@ -1,0 +1,58 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: #eee;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background: #1f1f1f;
+  padding: 20px;
+  border-radius: 12px;
+  width: 480px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 { margin: 5px 0 15px 0; }
+
+#chatControls { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+.chat-top-bar, #inviteBox { display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; margin-bottom: 10px; }
+
+#messages {
+  background: #222;
+  border-radius: 10px;
+  padding: 10px;
+  width: 100%;
+  height: 300px;
+  overflow-y: auto;
+  margin: 10px 0;
+}
+
+.msg { padding: 4px 0; }
+.msg b { color: #0af; }
+.msg span { color: #888; font-size: 0.75em; margin-left: 6px; }
+.chat-gif { max-width: 200px; display: block; margin: 4px 0; }
+.chat-gif-thumbnail { width: 80px; cursor: pointer; margin: 2px; border-radius: 4px; }
+
+#messageInput { width: 100%; height: 60px; resize: none; border: none; border-radius: 8px; padding: 8px; background: #2a2a2a; color: white; margin-bottom: 6px; }
+
+input, select, button { border: none; border-radius: 6px; padding: 8px; }
+select, input { background: #2a2a2a; color: white; }
+button { background: #007bff; color: white; cursor: pointer; transition: background 0.2s; }
+button:hover { background: #0056b3; }
+
+.email { font-size: 0.9em; margin-top: 8px; }
+.email input { width: 220px; text-align: center; }
+
+.nav-links { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+.nav-link { color: #888; text-decoration: none; font-size: 0.9em; }
+.nav-link:hover { color: white; text-decoration: underline; }
